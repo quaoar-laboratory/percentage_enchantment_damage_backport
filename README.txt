@@ -1,46 +1,39 @@
+Mod Info:
+=======
+Backport of DMK Multiplicative Enchantment Damage mod to 1.20.1, adjusted specifically for Apocalyptic Trilogy (APT)
+an upcoming modpack I'm working on.
 
-Source installation information for modders
--------------------------------------------
-This code follows the Minecraft Forge installation methodology. It will apply
-some small patches to the vanilla MCP source code, giving you and it access 
-to some of the data and functions you need to build a successful mod.
+Changes Sharpness, Smite, Bane of Arthropods, and Impaling damage calculations to be percentage based. This mod aims to
+lessen the gap between enchanted heavy vs light weapons.
 
-Note also that the patches are built against "un-renamed" MCP source code (aka
-SRG Names) - this means that you will not be able to read them directly against
-normal code.
+Mods often add "fast and weak" vs "slow and powerful" and even 2-handed weapons. When the additional damage from
+enchantments is all linear, the balance falls apart and fast weapons almost always win out in DPS. Because of the flat
+additions, the % DPS increase for 1 handed is much greater than 2 handed due to faster attack rate.
 
-Setup Process:
-==============================
+This mod changes the following enchantment damage modifiers (Based on Vanilla scaling at 6 damage from a lighter weapon,
+Knives):
 
-Step 1: Open your command-line and browse to the folder where you extracted the zip file.
+1. Sharpness: From +1 damage at level 1, 0.5 per additional level -> +16.8% level 1, + 8.3% per additional. (x1.5 at
+   level 5)
+2. Bane of Arthropods, Smite: +41.6% level 1, +41.6% per additional level. (x2.66 base damage at level 5 vs specific
+   mobs)
 
-Step 2: You're left with a choice.
-If you prefer to use Eclipse:
-1. Run the following command: `./gradlew genEclipseRuns`
-2. Open Eclipse, Import > Existing Gradle Project > Select Folder 
-   or run `gradlew eclipse` to generate the project.
+Fully configurable, so you can fine tune the balance:
 
-If you prefer to use IntelliJ:
-1. Open IDEA, and import project.
-2. Select your build.gradle file and have it import.
-3. Run the following command: `./gradlew genIntellijRuns`
-4. Refresh the Gradle Project in IDEA if required.
+1. Whether to run the multiplier logic at all for this enchant.
+2. Whether to override the default enchantment behavior (undo flat additions)
+3. What the first level multiplier is.
+4. What each additional level adds to that multiplier.
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can 
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-(this does not affect your code) and then start the process again.
+Keep in mind this stacks on top of crits (e.g. 1.5x from crit times 2.65x)
 
-Mapping Names:
-=============================
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license, if you do not agree with it you can change your mapping names to other crowdsourced names in your 
-build.gradle. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/MinecraftForge/MCPConfig/blob/master/Mojang.md
-
-Additional Resources: 
-=========================
-Community Documentation: https://docs.minecraftforge.net/en/1.20.1/gettingstarted/
-LexManos' Install Video: https://youtu.be/8VEdtQLuLO0
-Forge Forums: https://forums.minecraftforge.net/
-Forge Discord: https://discord.minecraftforge.net/
+Note: For modded enchantments from my experience (Illager's Bane and Sculk's Smite, will vary per mod), they don't have
+hardcoded damage scaling logic and will work through a Data Pack.
+Replace their damage minecraft:add effect(s) with the following:
+"type": "minecraft:multiply",
+"factor": {
+"type": "minecraft:linear",
+"base": 1.416,
+"per_level_above_first": 0.416
+}
+I recommend unzipping the mod(s) jar to find the data folder path.
